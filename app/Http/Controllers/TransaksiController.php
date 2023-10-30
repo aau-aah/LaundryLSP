@@ -7,6 +7,7 @@ use App\Models\Outlet;
 use App\Models\Transaksi;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TransaksiController extends Controller
 {
@@ -15,10 +16,13 @@ class TransaksiController extends Controller
      */
     public function index()
     {
-        $outlets = Outlet::all();
-        $members = Member::all();
+        $data = [
+            'outlets' => Outlet::all(),
+            'members' => Member::all(),
+            'transaksi' => Transaksi::all(),
+        ];
 
-        return view('pages.transaksi', ['outlets' => $outlets], ['members' => $members]);
+        return view('pages.transaksi', $data);
     }
 
     /**
@@ -40,7 +44,7 @@ class TransaksiController extends Controller
          **/
         $validated = $request->validate([
             'kode_invoice' => 'required|string',
-            'berat' => 'required|integer',
+            'dibayar' => 'required',
             'biaya_tambahan' => 'required|integer',
             'id_member' => 'required|integer',
             'id_outlet' => 'required|integer',
@@ -54,9 +58,14 @@ class TransaksiController extends Controller
             'kode_invoice' => $request['kode_invoice'],
             'id_member' => $request['id_member'],
             'tgl' => date('Y-m-d H:i:s'),
-            'batas_waktu' => date('Y-m-d H:i:s'),
+            'tgl_bayar' => date('Y-m-d H:i:s'),
+            'batas_waktu' => date('Y-m-d H:i:s', strtotime('+6 days')),
             'biaya_tambahan' => $request['biaya_tambahan'],
-            'berat' => $request['berat'],
+            'diskon' => 0,
+            'pajak' => 0,
+            'status' => 'baru',
+            'dibayar' => $request['dibayar'],
+            'id_user' => Auth::user()->id,
         ]);
 
         return redirect()->back()->with('success', 'Data berhasil disimpan.');

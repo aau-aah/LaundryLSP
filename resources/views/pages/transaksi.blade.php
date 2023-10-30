@@ -105,20 +105,27 @@
                                                 class="font-medium">Oops!</span> {{ $message }}</p>
                                     @enderror
                                 </div>
-                                {{-- ============= Input Harga ============= --}}
-                                <div>
-                                    <label for="berat"
-                                        class="block mb-2 text-sm font-medium @error('berat') text-red-700 dark:text-red-500 @else text-gray-900 dark:text-white @enderror">
-                                        Berat <span class="text-red-400">*</span>
-                                    </label>
-                                    <input required type="text" name="berat" id="berat" maxlength="11"
-                                        value="{{ old('berat') }}" onkeypress="return /[0-9]/i.test(event.key)"
-                                        class="rounded-lg block w-full p-2.5 sm:text-sm  @error('berat') bg-red-50 border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-red-100 dark:border-red-400 dark:placeholder-red-700 dark:text-red-900 @else bg-gray-50 border border-gray-300 text-gray-900 focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 @enderror"
-                                        placeholder="Berat">
-                                    @error('berat')
+
+                                <div class="dibayar">
+                                    <label for="dibayar"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status
+                                        Pembayaran
+                                        <span class="text-red-400">*</span></label></label>
+                                    <select id="dibayar" name="dibayar" required
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <option value="" class="hidden">Status Pembayaran</option>
+                                        <option value="dibayar"
+                                            @if (old('dibayar') == 'dibayar') {{ 'selected' }} @endif>
+                                            Dibayar
+                                        </option>
+                                        <option value="belum_dibayar"
+                                            @if (old('dibayar') == 'belum_dibayar') {{ 'selected' }} @endif>
+                                            Belum dibayar
+                                        </option>
+                                    </select>
+                                    @error('dibayar')
                                         <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span
-                                                class="font-medium">Oops!</span>
-                                            {{ $message }}</p>
+                                                class="font-medium">Oops!</span> {{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
@@ -334,16 +341,19 @@
                         #
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Nama Outlet
+                        Kode Invoice
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Jenis
+                        Member
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Nama Paket
+                        Tanggal
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Harga
+                        Status
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Pembayaran
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Action
@@ -351,16 +361,32 @@
                 </tr>
             </thead>
             <tbody>
-                {{-- @foreach ($pakets as $paket)
+                @foreach ($transaksi as $item)
                     <tr
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="w-4 p-4">
                             {{ $loop->iteration }}
                         </td>
                         <td class="capitalize px-6 py-4">
-                            {{ $paket->outlet->nama }}
+                            {{ $item->kode_invoice }}
                         </td>
                         <td class="capitalize px-6 py-4">
+                            {{ $item->member->nama }}
+                        </td>
+                        <td class="capitalize px-6 py-4">
+                            {{ \Carbon\Carbon::parse($item->tgl)->format('l, d F Y') }}
+                        </td>
+                        <td class="capitalize px-6 py-4">
+                            {{ $item->status }}
+                        </td>
+                        <td class="capitalize px-6 py-4">
+                            @if ($item->dibayar == 'belum_dibayar')
+                                Belum Dibayar
+                            @else
+                                Sudah Dibayar
+                            @endif
+                        </td>
+                        {{-- <td class="capitalize px-6 py-4">
                             {{ $paket->jenis }}
                         </td>
                         <td class="px-6 py-4">
@@ -368,15 +394,15 @@
                         </td>
                         <td class="px-6 py-4">
                             Rp. {{ number_format($paket->harga) }}
-                        </td>
+                        </td> --}}
                         <td class="px-6 py-4">
                             <a href="#"
-                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Detail</a>
                             <a href="#"
                                 class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
                         </td>
                     </tr>
-                @endforeach --}}
+                @endforeach
             </tbody>
         </table>
     </div>

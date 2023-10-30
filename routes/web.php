@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PaketController;
@@ -26,11 +27,14 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('pages.dashboard');
-    })->name('dashboard');
+    // Route::get('/dashboard', function () {
+    //     return view('pages.dashboard');
+    // })->name('dashboard');
 
-
+    Route::controller(DashboardController::class)->group(function () {
+        Route::get('/dashboard', 'index')
+            ->name('dashboard');
+    });
     Route::middleware(['only-admin'])->group(function () {
         Route::controller(PaketController::class)->group(function () {
             Route::get('/pakets', 'index')
